@@ -9,6 +9,7 @@ async function bootstrap() {
     "credentials": true
   }
   app.enableCors(option);
+  // app.useGlobalPipes()
   await app.listen(8080);
 }
 bootstrap();
