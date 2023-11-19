@@ -12,8 +12,9 @@ export class AuthRepository extends Repository<AuthEntity> {
     super(AuthEntity, dataSource.createEntityManager());
   };
 
-  async getLevelInfo(levelName : USER_AUTH_LEVEL){
-    return await this.findOne({where : {levelName}});
+  async getLevelInfo(authName: USER_AUTH_LEVEL) {
+    return await this.findOne({ where: { authName } });
   }
+
 
 }

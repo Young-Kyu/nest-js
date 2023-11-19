@@ -1,0 +1,20 @@
+server: 
+  port: 8080
+  
+db: 
+  type: 'mariadb'
+  port: 3306
+  database: 'auth'
+
+jwt:
+  expiresIn: 3600
+  secret: 'tempSecret'
+
+cros:
+  host: 'http://localhost:3000'
+
+google:
+  clientId: '92869307368-60cp5dm541orgrg3vregapoflutl50kq.apps.googleusercontent.com'
+  clientSecret : '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'
+  redirectUrl : 'http://localhost:8080/auth/google/callback'
+  grantType : 'authorization_code'

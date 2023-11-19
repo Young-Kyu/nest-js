@@ -1,0 +1,6 @@
+db: 
+  host: 'localhost'
+  username: 'root'
+  password: '1q2w3e4r5t'
+  synchronize: false
+  logging: true
