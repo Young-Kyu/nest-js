@@ -42,7 +42,7 @@ export class AuthController {
 
     let level = USER_AUTH_LEVEL.MEMBER;
     if (!user) {
-      const isFirstMember = await this.userService.getUserAndCount(email);
+      const isFirstMember = await this.userService.getUserCount();
       level = isFirstMember > 0 ? USER_AUTH_LEVEL.MEMBER : USER_AUTH_LEVEL.SUPER_ADMIN;
       const userLevel = await this.authService.getAuthInfo(level);
       const createUserDto = new CreateUserDto();

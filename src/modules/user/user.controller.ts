@@ -40,8 +40,8 @@ export class UserController {
   async getUserList(
     @Query() request: UserListRequestDTO
   ) {
-    console.log(request);
-    return true;
+    const result = this.userService.getUserList(request.page, request.size)
+    return result;
   }
 
   @Post('tt')

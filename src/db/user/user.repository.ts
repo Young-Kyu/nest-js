@@ -13,14 +13,11 @@ export class UserRepository extends Repository<UserEntity> {
   };
 
   async getAllUser(): Promise<UserEntity[]> {
-    const user = await this.find();
-    return user;
+    return await this.find();
   }
 
-  async getUserAndCount(emailAddress: string) {
-    const aa = await this.count()
-    console.log(aa);
-    return aa;
+  async getUserCount() {
+    return await this.count();
   }
 
   async getUserByEmail(emailAddress: string): Promise<UserEntity> {

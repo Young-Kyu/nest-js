@@ -17,8 +17,23 @@ export class UserService {
     return this.userRepository.getAllUser();
   };
 
-  getUserAndCount(emailAddress: string) {
-    return this.userRepository.getUserAndCount(emailAddress);
+  async getUserList(page: number = 1, take: number = 10) {
+    const [users, total] = await this.userRepository.findAndCount({
+      take,
+      skip: (page - 1) * take
+    });
+    return {
+      data: users,
+      paging: {
+        total,
+        page,
+        lastPage: Math.ceil(total / take)
+      }
+    }
+  }
+
+  getUserCount() {
+    return this.userRepository.count();
   }
 
   getUserByEmail(emailAddress: string): Promise<UserEntity> {
