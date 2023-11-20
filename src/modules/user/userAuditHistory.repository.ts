@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { UserAuditHistoryEntity } from "src/modules/user/userAuditHistory.entity";
+import { UserAuditHistoryEntity } from "src/entities/user/userAuditHistory.entity";
 import { Repository, DataSource } from "typeorm";
 
 
@@ -10,10 +10,10 @@ export class UserAuditHistoryRepository extends Repository<UserAuditHistoryEntit
     super(UserAuditHistoryEntity, dataSource.createEntityManager());
   };
 
-  async insertLog(request : InsertLogDTO){
+  async insertLog(request: InsertLogDTO) {
     const aa = this.create({
-      userId : request.userId,
-      comment : request.comment
+      userId: request.userId,
+      comment: request.comment
     })
 
     await this.save(aa);
@@ -23,7 +23,7 @@ export class UserAuditHistoryRepository extends Repository<UserAuditHistoryEntit
 }
 
 
-export class InsertLogDTO { 
-  userId : number;
-  comment : string;
+export class InsertLogDTO {
+  userId: number;
+  comment: string;
 }

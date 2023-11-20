@@ -1,13 +1,15 @@
-import { Controller, Get, Req, Res } from '@nestjs/common';
+import { BadGatewayException, Controller, Get, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import axios from 'axios';
 import { UserService } from '../user/user.service';
-import { UserEntity } from '../user/user.entity';
+import { UserEntity } from '../../entities/user/user.entity';
 import { CreateUserDto } from '../user/dto/user.dto';
 import { USER_AUTH_LEVEL } from '../user/model/user.model';
 import { JwtService } from '@nestjs/jwt';
 import { isPublic } from 'src/config/guards/global.guard';
-
+import * as config from 'config';
+import { ERROR_MESSAGE } from 'src/contants/error';
+import { v4 as uuidv4 } from 'uuid';
 @Controller('auth')
 export class AuthController {
 
@@ -24,7 +26,7 @@ export class AuthController {
       'response_type=code&' +
       'redirect_uri=http://localhost:8080/auth/google/callback&' +
       'scope=openid%20profile%20email&' +
-      'client_id=' + `${'92869307368-60cp5dm541orgrg3vregapoflutl50kq.apps.googleusercontent.com'}`
+      'client_id=' + `${config.get('google').clientId}`
       ;
     return { url: googleLoginUrl };
   }
@@ -33,7 +35,9 @@ export class AuthController {
   @Get('google/callback')
   async googleLoginCallback(@Req() req, @Res() res) {
     const code = req.query.code;
-
+    if (!code) {
+      throw new BadGatewayException(ERROR_MESSAGE.GOOGLE_BAD_GATEWAY);
+    }
     const idToken = await this.authService.getGoogleIdToken(code);
 
     const { email } = await this.authService.verifyGoogleIdToken(idToken);
@@ -45,9 +49,11 @@ export class AuthController {
       const isFirstMember = await this.userService.getUserCount();
       level = isFirstMember > 0 ? USER_AUTH_LEVEL.MEMBER : USER_AUTH_LEVEL.SUPER_ADMIN;
       const userLevel = await this.authService.getAuthInfo(level);
+      const userId = uuidv4();
       const createUserDto = new CreateUserDto();
       createUserDto.emailAddress = email;
       createUserDto.level = userLevel.level;
+      createUserDto.userId = userId;
       user = await this.userService.createUser(createUserDto);
     }
 

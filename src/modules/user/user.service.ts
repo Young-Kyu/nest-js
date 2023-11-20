@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserRepository } from "src/db/user/user.repository";
+import { UserRepository } from "src/modules/user/user.repository";
 import { CreateUserDto, UserAuthUpdateRequestDTO, UserListRequestDTO, UserProfileResponseDTO } from "./dto/user.dto";
-import { UserEntity } from "./user.entity";
-import { AuthRepository } from "src/db/auth/auth.repository";
+import { UserEntity } from "../../entities/user/user.entity";
+import { AuthRepository } from "src/modules/auth/auth.repository";
 import { Like, Connection, DataSource } from "typeorm";
-import { InsertLogDTO, UserAuditHistoryRepository } from "src/db/user/userAuditHistory.repository";
-import { UserAuditHistoryEntity } from "./userAuditHistory.entity";
+import { InsertLogDTO, UserAuditHistoryRepository } from "src/modules/user/userAuditHistory.repository";
+import { UserAuditHistoryEntity } from "../../entities/user/userAuditHistory.entity";
 @Injectable()
 export class UserService {
 
@@ -76,64 +76,27 @@ export class UserService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    try{
-      const aa = new UserAuditHistoryEntity();
-      aa.comment = 'test';
-      aa.userId = updateTargetUser.id;
-      await queryRunner.manager.save(aa);
+    try {
+      const userAuditLogDTO = new UserAuditHistoryEntity();
+      userAuditLogDTO.comment = 'test';
+      userAuditLogDTO.userId = updateTargetUser.id;
+      await queryRunner.manager.save(userAuditLogDTO);
 
-      const bb = new UserEntity();
-      bb.emailAddress = updateTargetUser.emailAddress;
-      bb.userLevel = updateAuth.level
+      const updateUser = new UserEntity();
+      updateUser.emailAddress = updateTargetUser.emailAddress;
+      updateUser.userLevel = updateAuth.level
 
-      await queryRunner.manager.save(bb);
-      // throw Error('afew')
+      await queryRunner.manager.update(UserEntity, { emailAddress: updateUser.emailAddress }, updateUser);
       await queryRunner.commitTransaction();
 
-    }catch(err){
-      await queryRunner.rollbackTransaction()
-    }finally{
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException('test');
+    } finally {
       await queryRunner.release();
     }
 
-    // await this.dataSource.transaction(async tm => {
-      
-
-      // const bb = tm.withRepository(this.userRepository);
-
-      // const insertLog = new InsertLogDTO();
-      // insertLog.userId = updateTargetUser.id;
-      // insertLog.comment = 'test';
-
-      // await aa.insertLog(insertLog)
-
-      // await bb.updateUser(updateTargetUser.id, updateAuth.level);
-    // })
-
-
-
-    // const queryRunner = this.dataSource.createQueryRunner();
-
-    // await queryRunner.connect();
-    // await queryRunner.startTransaction();
-    // try {
-    //   const insertLog = new InsertLogDTO();
-    //   insertLog.userId = updateTargetUser.id;
-    //   insertLog.comment = 'test';
-
-    //   await queryRunner.manager.getRepository(UserAuditHistoryRepository).save(insertLog);
-    //   throw Error('error')
-    //   await this.userRepository.updateUser(updateTargetUser.id, updateAuth.level)
-
-    // } catch (err) {
-    //   console.log('롤백');
-    //   await queryRunner.rollbackTransaction();
-    // } finally {
-    //   await queryRunner.release();
-    // }
-
-
-    // return this.userRepository.updateUser(updateTargetUser.id, updateAuth.level)
+    return true;
   }
 
 }

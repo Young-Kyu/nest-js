@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { USER_AUTH_LEVEL } from "../user/model/user.model";
+import { USER_AUTH_LEVEL } from "../../modules/user/model/user.model";
 import { UserEntity } from "../user/user.entity";
 
 
@@ -15,6 +15,6 @@ export class AuthEntity extends BaseEntity {
   level: number;
 
   @OneToOne(() => UserEntity, auth => auth.auth)
-  @JoinColumn({ name: 'id'})
-  authInfo : UserEntity;
+  @JoinColumn({ name: 'id' })
+  authInfo: UserEntity;
 }

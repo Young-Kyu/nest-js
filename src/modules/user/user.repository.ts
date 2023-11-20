@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateUserDto, UserProfileResponseDTO } from "src/modules/user/dto/user.dto";
 import { USER_AUTH_LEVEL } from "src/modules/user/model/user.model";
 import { Repository, DataSource } from "typeorm";
-import { UserEntity } from "../../modules/user/user.entity";
+import { UserEntity } from "../../entities/user/user.entity";
 
 
 @Injectable()
@@ -18,6 +18,10 @@ export class UserRepository extends Repository<UserEntity> {
 
   async getUserCount() {
     return await this.count();
+  }
+
+  async getUserByUserId(userId: string): Promise<UserEntity> {
+    return await this.findOneBy({ userId })
   }
 
   async getUserByEmail(emailAddress: string): Promise<UserEntity> {
@@ -51,10 +55,10 @@ export class UserRepository extends Repository<UserEntity> {
     return addUser;
   }
 
-  async updateUser(id : number,updateAuth: number){
+  async updateUser(id: number, updateAuth: number) {
     await this.update(
-      {id},
-      {userLevel : updateAuth}
+      { id },
+      { userLevel: updateAuth }
     )
   }
 

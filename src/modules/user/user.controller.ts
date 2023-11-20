@@ -1,18 +1,19 @@
-import { Body, Controller, Get,Patch, Post, Query, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Get, Patch, Post, Query, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UserStatusValidtionPipe } from "src/pipes/user-status-validtion.pipe";
 import { CreateUserDto, UserAuthUpdateRequestDTO, UserListRequestDTO, UserProfileRequestDTO, UserProfileResponseDTO } from "./dto/user.dto";
-import { UserEntity } from "./user.entity";
+import { UserEntity } from "../../entities/user/user.entity";
 import { UserService } from "./user.service";
 import { isPublic } from "src/config/guards/global.guard";
 import { getUser } from "src/config/user.decorator";
 
 
+@UsePipes(ValidationPipe)
 @Controller('user')
 export class UserController {
 
   constructor(
     private readonly userService: UserService,
-    ) { };
+  ) { };
 
   @Get('my')
   async getUserInfo(@getUser() requestUser: UserProfileRequestDTO): Promise<UserProfileResponseDTO> {
@@ -23,8 +24,8 @@ export class UserController {
     response.authName = userInfo.auth.authName;
     return response;
   }
+
   @Post()
-  @isPublic()
   @UsePipes(ValidationPipe) // CreateUserDto에 정의된 validation을 적용, ValidationPipe : nest에서 기본으로 제공하는 유효성 체크 하는 기능
   async createUser(
     @Body() body: CreateUserDto
@@ -44,10 +45,8 @@ export class UserController {
   }
 
   @Patch('auth')
-  async updateUserAuth(@getUser() requestUser: UserEntity, @Body(UserStatusValidtionPipe) body : UserAuthUpdateRequestDTO){
-
+  async updateUserAuth(@getUser() requestUser: UserEntity, @Body(UserStatusValidtionPipe) body: UserAuthUpdateRequestDTO) {
     return this.userService.updateUserAuth(requestUser, body);
-
   }
 
   @Post('tt')
@@ -58,7 +57,8 @@ export class UserController {
     for (let i = 7; i < 33; i++) {
       await this.userService.createUser({
         emailAddress: `test${i}@test.com`,
-        level: 3
+        level: 3,
+        userId: `test${i}`
       });
     }
     return true;

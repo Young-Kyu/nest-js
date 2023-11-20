@@ -9,19 +9,19 @@ export class UserAuditHistoryEntity extends BaseEntity {
   id: number;
 
   @IsNumber()
-  @Column({ name: 'user_id' , nullable : false})
+  @Column({ name: 'user_id', nullable: false })
   userId: number;
 
   @IsString()
-  @Column({ name: 'comment' , nullable : false})
+  @Column({ name: 'comment', nullable: false })
   comment: string;
 
   @IsDate()
-  @CreateDateColumn({type : 'timestamp'})
+  @CreateDateColumn({ type: 'timestamp' })
   @Column({ name: 'create_date' })
   createDate: Date;
 
   @ManyToOne(() => UserEntity, user => user.history)
-  user : UserEntity;
+  user: UserEntity;
 
 }

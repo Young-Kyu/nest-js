@@ -5,8 +5,8 @@ import { GoogleValidtionResponseDTO } from './model/auth.model';
 import { JwtService } from '@nestjs/jwt';
 import { USER_AUTH_LEVEL } from '../user/model/user.model';
 import * as config from 'config';
-import { AuthEntity } from './auth.entity';
-import { AuthRepository } from 'src/db/auth/auth.repository';
+import { AuthEntity } from '../../entities/auth/auth.entity';
+import { AuthRepository } from 'src/modules/auth/auth.repository';
 @Injectable()
 export class AuthService {
 
@@ -18,12 +18,14 @@ export class AuthService {
 
   async getGoogleIdToken(code: string): Promise<string> {
     try {
+      const { clientId, clientSecret, redirectUrl, grantType } = config.get('google');
+
       const { data } = await axios.post('https://oauth2.googleapis.com/token', {
         code,
-        client_id: config.get('google').clientId,
-        client_secret: config.get('google').clientSecret,
-        redirect_uri: config.get('google').redirectUrl,
-        grant_type: config.get('google').grantType
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUrl,
+        grant_type: grantType
       });
       const idToken: string = data.id_token;
       return idToken;
