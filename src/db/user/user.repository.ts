@@ -28,6 +28,19 @@ export class UserRepository extends Repository<UserEntity> {
     return user;
   }
 
+  /* 
+  async getUserByEmail(emailAddress: string): Promise<UserEntity> {
+    const user = await this.findOne({
+      where: { emailAddress },
+      relations: ['auth','history']
+    })
+    console.log('=========================================================');
+    console.log(user);
+    console.log('=========================================================');
+    return user;
+  }
+  */
+
   async createUser(user: CreateUserDto) {
     const addUser = this.create({
       userLevel: user.level,
@@ -36,6 +49,13 @@ export class UserRepository extends Repository<UserEntity> {
     await this.save(addUser)
 
     return addUser;
+  }
+
+  async updateUser(id : number,updateAuth: number){
+    await this.update(
+      {id},
+      {userLevel : updateAuth}
+    )
   }
 
 }

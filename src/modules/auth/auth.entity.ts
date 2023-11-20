@@ -13,4 +13,8 @@ export class AuthEntity extends BaseEntity {
 
   @Column({ name: 'level' })
   level: number;
+
+  @OneToOne(() => UserEntity, auth => auth.auth)
+  @JoinColumn({ name: 'id'})
+  authInfo : UserEntity;
 }

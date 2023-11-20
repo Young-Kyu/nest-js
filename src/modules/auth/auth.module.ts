@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import * as config from 'config';
+import { UserAuditHistoryRepository } from 'src/db/user/userAuditHistory.repository';
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -26,6 +27,7 @@ import * as config from 'config';
     UserService,
     AuthRepository,
     UserRepository,
+    UserAuditHistoryRepository,
     JwtStrategy,
   ],
   exports: [

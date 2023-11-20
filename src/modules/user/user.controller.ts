@@ -1,18 +1,18 @@
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Patch, Post, Query, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Get,Patch, Post, Query, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UserStatusValidtionPipe } from "src/pipes/user-status-validtion.pipe";
-import { CreateUserDto, UpdateUserDto, UserListRequestDTO, UserProfileRequestDTO, UserProfileResponseDTO } from "./dto/user.dto";
-import { USER_AUTH_LEVEL } from "./model/user.model";
+import { CreateUserDto, UserAuthUpdateRequestDTO, UserListRequestDTO, UserProfileRequestDTO, UserProfileResponseDTO } from "./dto/user.dto";
 import { UserEntity } from "./user.entity";
 import { UserService } from "./user.service";
-import { JwtAuthGuard, isPublic } from "src/config/guards/global.guard";
+import { isPublic } from "src/config/guards/global.guard";
 import { getUser } from "src/config/user.decorator";
-import { plainToInstance } from "class-transformer";
 
 
 @Controller('user')
 export class UserController {
 
-  constructor(private readonly userService: UserService) { };
+  constructor(
+    private readonly userService: UserService,
+    ) { };
 
   @Get('my')
   async getUserInfo(@getUser() requestUser: UserProfileRequestDTO): Promise<UserProfileResponseDTO> {
@@ -32,7 +32,6 @@ export class UserController {
     const createUserDto = new CreateUserDto();
     createUserDto.emailAddress = body.emailAddress;
     createUserDto.level = body.level;
-    console.log(createUserDto);
     return await this.userService.createUser(createUserDto);
   }
 
@@ -40,8 +39,15 @@ export class UserController {
   async getUserList(
     @Query() request: UserListRequestDTO
   ) {
-    const result = this.userService.getUserList(request.page, request.size)
+    const result = this.userService.getUserList(request)
     return result;
+  }
+
+  @Patch('auth')
+  async updateUserAuth(@getUser() requestUser: UserEntity, @Body(UserStatusValidtionPipe) body : UserAuthUpdateRequestDTO){
+
+    return this.userService.updateUserAuth(requestUser, body);
+
   }
 
   @Post('tt')

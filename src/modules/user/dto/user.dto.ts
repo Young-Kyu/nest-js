@@ -1,4 +1,4 @@
-import { IsNotEmpty } from "class-validator";
+import { IsNotEmpty, IsNumber } from "class-validator";
 import { USER_AUTH_LEVEL } from "../model/user.model";
 import { Exclude, Expose } from "class-transformer";
 
@@ -32,10 +32,13 @@ export class UserProfileResponseDTO {
 }
 
 export class UserListRequestDTO {
+  @IsNumber()
   @IsNotEmpty()
   size: number;
   @IsNotEmpty()
   page: number;
+
+  search : string;
 }
 
 export class UserListResponseDTO {
@@ -55,4 +58,12 @@ export class UserListResponseDTO {
 export class UserProfileRequestDTO {
   @IsNotEmpty()
   emailAddress: string;
+}
+
+export class UserAuthUpdateRequestDTO { 
+  @IsNotEmpty()
+  emailAddress : string;
+
+  @IsNotEmpty()
+  updateAuth : USER_AUTH_LEVEL;
 }
