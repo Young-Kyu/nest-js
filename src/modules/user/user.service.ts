@@ -7,6 +7,7 @@ import { AuthRepository } from "../auth/auth.repository";
 import { UserRepository } from "./user.repository";
 import { UserAuditHistoryRepository } from "./userAuditHistory.repository";
 import { UserAuditHistoryEntity } from "src/entities/user/userAuditHistory.entity";
+import { ERROR_MESSAGE } from "src/constants/error";
 @Injectable()
 export class UserService {
 
@@ -73,7 +74,7 @@ export class UserService {
 
     const hasUser = await this.getUserByUserId(user.userId);
     if (hasUser) {
-      throw new BadRequestException('이미 존재하는 유저입니다.');
+      throw new BadRequestException(ERROR_MESSAGE.IS_EXIST_USER);
     }
     return this.userRepository.createUser(user);
   }
@@ -82,10 +83,10 @@ export class UserService {
 
     const updateTargetUser = await this.getUserByEmail(targetUser.emailAddress);
     if (requestUser.id === updateTargetUser.id) {
-      throw new BadRequestException('나 자신 불가능')
+      throw new BadRequestException(ERROR_MESSAGE.NO_AUTHRIZED_ERROR)
     }
     if (requestUser.auth.level > updateTargetUser.auth.level) {
-      throw new BadRequestException('update 불가능')
+      throw new BadRequestException(ERROR_MESSAGE.NO_AUTHRIZED_ERROR)
     }
     const updateAuth = await this.authRepository.getLevelInfo(targetUser.updateAuth);
 
@@ -95,7 +96,7 @@ export class UserService {
 
     try {
       const userAuditLogDTO = new UserAuditHistoryEntity();
-      userAuditLogDTO.comment = 'test';
+      userAuditLogDTO.comment = targetUser.comment;
       userAuditLogDTO.userId = updateTargetUser.id;
       await queryRunner.manager.save(userAuditLogDTO);
 
@@ -108,7 +109,7 @@ export class UserService {
 
     } catch (err) {
       await queryRunner.rollbackTransaction();
-      throw new BadRequestException('test');
+      throw new BadRequestException(ERROR_MESSAGE.TRANSACTION_FAILURE);
     } finally {
       await queryRunner.release();
     }

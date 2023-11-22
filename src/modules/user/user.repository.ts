@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateUserDto, UserProfileResponseDTO } from "../../modules/user/dto/user.dto";
-import { USER_AUTH_LEVEL } from "../../modules/user/model/user.model";
 import { Repository, DataSource } from "typeorm";
 import { UserEntity } from "../../entities/user/user.entity";
 

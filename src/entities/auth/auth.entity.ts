@@ -1,6 +1,6 @@
 import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { USER_AUTH_LEVEL } from "../../modules/user/model/user.model";
 import { UserEntity } from "../user/user.entity";
+import { USER_AUTH_LEVEL } from "src/constants/auth";
 
 
 @Entity('auth')

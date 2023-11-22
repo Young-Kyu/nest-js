@@ -2,11 +2,11 @@ import { BadGatewayException, Controller, Get, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/user.dto';
-import { USER_AUTH_LEVEL } from '../user/model/user.model';
 import { isPublic } from '../../config/guards/global.guard';
 import * as config from 'config';
-import { ERROR_MESSAGE } from '../../contants/error';
+import { ERROR_MESSAGE } from '../../constants/error';
 import { v4 as uuidv4 } from 'uuid';
+import { USER_AUTH_LEVEL } from 'src/constants/auth';
 @Controller('auth')
 export class AuthController {
 

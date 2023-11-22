@@ -5,6 +5,7 @@ import { UserService } from "./user.service";
 import { isPublic } from "../../config/guards/global.guard";
 import { getUser } from "../../config/user.decorator";
 import { UserStatusValidtionPipe } from "../../pipes/user-status-validtion.pipe";
+import { ERROR_MESSAGE } from "src/constants/error";
 
 
 @UsePipes(ValidationPipe)
@@ -18,6 +19,9 @@ export class UserController {
   @Get('my')
   async getMyInfo(@getUser() requestUser: UserProfileRequestDTO): Promise<UserProfileResponseDTO> {
     const userInfo = await this.userService.getUserByEmail(requestUser.emailAddress)
+    if (!userInfo) {
+      throw new Error(ERROR_MESSAGE.NOT_FOUND_EXCEPTION);
+    }
     const response = new UserProfileResponseDTO();
     response.emailAddress = userInfo.emailAddress;
     response.level = userInfo.userLevel;
@@ -41,7 +45,6 @@ export class UserController {
     @Query() request: UserListRequestDTO
   ) {
     const result = this.userService.getUserList(request)
-    // await delay();
     return result;
   }
 

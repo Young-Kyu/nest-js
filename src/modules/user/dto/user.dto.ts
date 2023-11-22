@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { USER_AUTH_LEVEL } from "../model/user.model";
 import { Exclude, Expose } from "class-transformer";
+import { USER_AUTH_LEVEL } from "src/constants/auth";
 
 
 export class CreateUserDto {
@@ -67,6 +67,9 @@ export class UserAuthUpdateRequestDTO {
 
   @IsNotEmpty()
   updateAuth: USER_AUTH_LEVEL;
+
+  @IsNotEmpty()
+  comment: string;
 }
 
 export class UserAuditHistoryRequestDTO {

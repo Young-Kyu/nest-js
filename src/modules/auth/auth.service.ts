@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { GoogleValidtionResponseDTO } from './model/auth.model';
 import { JwtService } from '@nestjs/jwt';
-import { USER_AUTH_LEVEL } from '../user/model/user.model';
 import * as config from 'config';
 import { AuthEntity } from '../../entities/auth/auth.entity';
 import { AuthRepository } from './auth.repository';
-import { ERROR_MESSAGE } from '../../contants/error';
+import { ERROR_MESSAGE } from '../../constants/error';
+import { USER_AUTH_LEVEL } from 'src/constants/auth';
 @Injectable()
 export class AuthService {
 
@@ -59,6 +59,5 @@ export class AuthService {
   async getAuthInfo(level: USER_AUTH_LEVEL): Promise<AuthEntity> {
     return this.authRepository.getLevelInfo(level);
   }
-
 
 }

@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  authbackend:
+    image: auth-backend
+    ports:
+      - 45646:8080
+    working_dir: /usr/src/app
+    build:
+      context: .
+      dockerfile: Dockerfile

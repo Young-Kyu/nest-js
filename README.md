@@ -1,73 +1,48 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 환경 구성
+  1. 프레임워크: Nest.js
+  2. 언어: TypeScript
+  3. DB: mariaDB - TypeORM
+  4. 테스트: jest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 실행 순서
 
-## Description
+  1. npm install
+  2. npm run start(:dev / :prod) # 각 실행 환경별로 cli 별도
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 프로젝트 구성
 
-## Installation
+/src
+  + config: Guard, ORMconfig 관련 폴더
+  + constants: Error Message등 enum 관련 폴더
+  + entities: Entity 관련 폴더
+  + filters: 최종 Error formatting을 위한 filter 관련 폴더
+  + interceptors: interceptor 관련 폴더
+  + modules: 각 서비스별 controller, service, repository파일 폴더
+  + pipes: pipe 관련 폴더
+  + strategies: JWT 인증 / 인가 관련 폴더
 
-```bash
-$ npm install
-```
+## 주요 기능 개발
 
-## Running the app
+  1. 서버사이드 구글 로그인 연동
 
-```bash
-# development
-$ npm run start
+  2. JWT Token 생성 및 Token 기반 private / public API 분리
 
-# watch mode
-$ npm run start:dev
+  3. success / error response format 통일화
+    + ex. {SuccessOrNot : Y | N, data: {}, statusCode: ''}
+  
+  4. TypeORM 기반 DB 핸들링
+    + 기본 CRUD 기능 및 transaction 처리
 
-# production mode
-$ npm run start:prod
-```
+  5. 테스트 코드 작성
 
-## Test
+  6. 권한 관련 CRUD 기능 개발 및 에러케이스 처리
+    + Audit Log 포함
+  
+  7. 실행 환경 별 환경변수 분기처리
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## 중점적으로 개발 진행한 사항
+  - useGuard, Public API, ValidationPipe, 각 interceptor 등 비지니스 로직이 실행되기 전
+    거쳐야 할 인증정보등을 중점으로 개발했습니다.
+  
+  - TypeORM에서 queryBuilder를 사용하지 않고 순수 제공 기능으로 구현을 진행했습니다.

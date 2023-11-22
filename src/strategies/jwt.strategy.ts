@@ -3,9 +3,9 @@ import { PassportStrategy } from "@nestjs/passport";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { UserRepository } from "../modules/user/user.repository";
-import { USER_AUTH_LEVEL } from "../modules/user/model/user.model";
 import { UserEntity } from "../entities/user/user.entity";
 import * as config from 'config';
+import { USER_AUTH_LEVEL } from "src/constants/auth";
 
 @Injectable() // 다른 모듈에서도 접근할 수 있게 만들어주는 데코레이터
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // 상위 contructor에서 우선 토큰이 유효한지 확인되면 자동으로 실행되는 메소드
   // payload는 jwt 토큰 
   async validate(payload: { role: USER_AUTH_LEVEL, emailAddress: string }) {
-    const { emailAddress, role } = payload;
+    const { emailAddress } = payload;
 
     const user: UserEntity = await this.userRepository.getUserByEmail(emailAddress);
     if (!user) {

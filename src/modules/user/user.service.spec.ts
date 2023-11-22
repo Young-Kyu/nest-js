@@ -8,7 +8,6 @@ import { AuthRepository } from '../auth/auth.repository';
 import { UserRepository } from './user.repository';
 import { AuthEntity } from 'src/entities/auth/auth.entity';
 import { UserAuditHistoryEntity } from 'src/entities/user/userAuditHistory.entity';
-import { USER_AUTH_LEVEL } from './model/user.model';
 
 
 const mockUserRepository = () => ({

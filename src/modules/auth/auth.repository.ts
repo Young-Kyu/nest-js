@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { AuthEntity } from "../../entities/auth/auth.entity";
 import { Repository, DataSource } from "typeorm";
-import { USER_AUTH_LEVEL } from "../user/model/user.model";
+import { USER_AUTH_LEVEL } from "src/constants/auth";
 
 @Injectable()
 export class AuthRepository extends Repository<AuthEntity> {

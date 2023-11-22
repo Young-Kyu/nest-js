@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Repository, DataSource } from "typeorm";
 import { UserAuditHistoryRequestDTO } from "./dto/user.dto";
 import { UserAuditHistoryEntity } from "../../entities/user/userAuditHistory.entity";
+import { InsertLogDTO } from "./model/user.model";
 
 
 @Injectable()
@@ -41,13 +42,6 @@ export class UserAuditHistoryRepository extends Repository<UserAuditHistoryEntit
         lastPage: Math.ceil(total / take)
       }
     }
-
   }
 
-}
-
-
-export class InsertLogDTO {
-  userId: number;
-  comment: string;
 }
