@@ -1,6 +1,6 @@
 import { ArgumentMetadata, BadRequestException, NotFoundException, PipeTransform } from "@nestjs/common";
-import { UserAuthUpdateRequestDTO } from "src/modules/user/dto/user.dto";
-import { USER_AUTH_LEVEL } from "src/modules/user/model/user.model";
+import { UserAuthUpdateRequestDTO } from "../modules/user/dto/user.dto";
+import { USER_AUTH_LEVEL } from "../modules/user/model/user.model";
 
 /* custom Pipe */
 export class UserStatusValidtionPipe implements PipeTransform {

@@ -5,6 +5,7 @@ db:
   type: 'mariadb'
   port: 3306
   database: 'auth'
+  timezone: "Z"
 
 jwt:
   expiresIn: 3600

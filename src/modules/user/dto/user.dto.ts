@@ -35,13 +35,9 @@ export class UserProfileResponseDTO {
 }
 
 export class UserListRequestDTO {
-  @IsNumber()
-  @IsNotEmpty()
   size: number;
-  @IsNotEmpty()
   page: number;
-
-  search: string;
+  search?: string;
 }
 
 export class UserListResponseDTO {
@@ -71,4 +67,14 @@ export class UserAuthUpdateRequestDTO {
 
   @IsNotEmpty()
   updateAuth: USER_AUTH_LEVEL;
+}
+
+export class UserAuditHistoryRequestDTO {
+
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
+
+  size: number;
+  page: number;
 }

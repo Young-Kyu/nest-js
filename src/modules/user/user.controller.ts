@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Patch, Post, Query, UsePipes, ValidationPipe } from "@nestjs/common";
-import { UserStatusValidtionPipe } from "src/pipes/user-status-validtion.pipe";
-import { CreateUserDto, UserAuthUpdateRequestDTO, UserListRequestDTO, UserProfileRequestDTO, UserProfileResponseDTO } from "./dto/user.dto";
+import { Body, Controller, Get, Param, Patch, Post, Query, UsePipes, ValidationPipe } from "@nestjs/common";
+import { CreateUserDto, UserAuditHistoryRequestDTO, UserAuthUpdateRequestDTO, UserListRequestDTO, UserProfileRequestDTO, UserProfileResponseDTO } from "./dto/user.dto";
 import { UserEntity } from "../../entities/user/user.entity";
 import { UserService } from "./user.service";
-import { isPublic } from "src/config/guards/global.guard";
-import { getUser } from "src/config/user.decorator";
+import { isPublic } from "../../config/guards/global.guard";
+import { getUser } from "../../config/user.decorator";
+import { UserStatusValidtionPipe } from "../../pipes/user-status-validtion.pipe";
 
 
 @UsePipes(ValidationPipe)
@@ -16,7 +16,7 @@ export class UserController {
   ) { };
 
   @Get('my')
-  async getUserInfo(@getUser() requestUser: UserProfileRequestDTO): Promise<UserProfileResponseDTO> {
+  async getMyInfo(@getUser() requestUser: UserProfileRequestDTO): Promise<UserProfileResponseDTO> {
     const userInfo = await this.userService.getUserByEmail(requestUser.emailAddress)
     const response = new UserProfileResponseDTO();
     response.emailAddress = userInfo.emailAddress;
@@ -41,7 +41,23 @@ export class UserController {
     @Query() request: UserListRequestDTO
   ) {
     const result = this.userService.getUserList(request)
+    // await delay();
     return result;
+  }
+
+  @Get('/:userId')
+  async getUserInfo(
+    @Param('userId') userId: string
+  ) {
+    return await this.userService.getUserByUserIdWithAuth(userId)
+  }
+
+
+  @Get('audit/log')
+  async getUserAuditLog(
+    @Query() request: UserAuditHistoryRequestDTO
+  ) {
+    return await this.userService.getUserAuditHistory(request)
   }
 
   @Patch('auth')
@@ -63,10 +79,10 @@ export class UserController {
     }
     return true;
   }
-  // @Patch('level')
-  // async updateUserLevel(
-  //   @Body(UserStatusValidtionPipe) request: UpdateUserDto // 변수 부분 interceptor 구현(Pipe)
-  // ) {
-  //   return this.userService.updateUser(request);
-  // }
+}
+
+const delay = () => {
+  return new Promise((res) => {
+    setTimeout(() => res(true), 3000)
+  })
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { GoogleValidtionResponseDTO } from './model/auth.model';
@@ -6,7 +6,8 @@ import { JwtService } from '@nestjs/jwt';
 import { USER_AUTH_LEVEL } from '../user/model/user.model';
 import * as config from 'config';
 import { AuthEntity } from '../../entities/auth/auth.entity';
-import { AuthRepository } from 'src/modules/auth/auth.repository';
+import { AuthRepository } from './auth.repository';
+import { ERROR_MESSAGE } from '../../contants/error';
 @Injectable()
 export class AuthService {
 
@@ -30,7 +31,7 @@ export class AuthService {
       const idToken: string = data.id_token;
       return idToken;
     } catch (err) {
-      throw new BadRequestException();
+      throw new BadGatewayException(ERROR_MESSAGE.GOOGLE_BAD_GATEWAY);
     }
   }
 
@@ -43,13 +44,14 @@ export class AuthService {
 
       return userInfo;
     } catch (err) {
-      throw new BadRequestException();
+      throw new BadGatewayException(ERROR_MESSAGE.GOOGLE_BAD_GATEWAY);
     }
   };
 
-  generateJwtToken(emailAddress: string, role: USER_AUTH_LEVEL) {
+  generateJwtToken(emailAddress: string, userId: string, role: USER_AUTH_LEVEL) {
     return this.jwtService.sign({
       emailAddress,
+      userId,
       role
     });
   }

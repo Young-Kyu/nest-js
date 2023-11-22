@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserRepository } from "src/modules/user/user.repository";
-import { CreateUserDto, UserAuthUpdateRequestDTO, UserListRequestDTO, UserProfileResponseDTO } from "./dto/user.dto";
+import { CreateUserDto, UserAuditHistoryRequestDTO, UserAuthUpdateRequestDTO, UserListRequestDTO, UserProfileResponseDTO } from "./dto/user.dto";
 import { UserEntity } from "../../entities/user/user.entity";
-import { AuthRepository } from "src/modules/auth/auth.repository";
-import { Like, Connection, DataSource } from "typeorm";
-import { InsertLogDTO, UserAuditHistoryRepository } from "src/modules/user/userAuditHistory.repository";
-import { UserAuditHistoryEntity } from "../../entities/user/userAuditHistory.entity";
+import { Like, DataSource } from "typeorm";
+import { AuthRepository } from "../auth/auth.repository";
+import { UserRepository } from "./user.repository";
+import { UserAuditHistoryRepository } from "./userAuditHistory.repository";
+import { UserAuditHistoryEntity } from "src/entities/user/userAuditHistory.entity";
 @Injectable()
 export class UserService {
 
@@ -31,7 +31,8 @@ export class UserService {
       skip: (page - 1) * take,
       where: {
         emailAddress: Like(`%${search}%`)
-      }
+      },
+      relations: ['auth']
     })
     return {
       data: users,
@@ -43,7 +44,12 @@ export class UserService {
     }
   }
 
-  getUserCount() {
+  async getUserAuditHistory(request: UserAuditHistoryRequestDTO) {
+    const user = await this.userRepository.getUserByUserId(request.userId);
+    return this.userAuditHistoryRepository.getAuditLogs({ ...request, id: user.id })
+  }
+
+  getUserCount(): Promise<number> {
     return this.userRepository.count();
   }
 
@@ -51,13 +57,24 @@ export class UserService {
     return this.userRepository.getUserByEmail(emailAddress);
   };
 
+  getUserByUserId(userId: string): Promise<UserEntity> {
+    return this.userRepository.getUserByUserId(userId);
+  }
+
+  getUserByUserIdWithAuth(userId: string): Promise<UserEntity> {
+    return this.userRepository.getUserWithAuth(userId);
+  }
+
+  updateUserLoginDate(user: UserEntity): void {
+    this.userRepository.updateLastLoginDate(user);
+  }
+
   async createUser(user: CreateUserDto): Promise<UserEntity> {
 
-    const hasUser = await this.getUserByEmail(user.emailAddress);
+    const hasUser = await this.getUserByUserId(user.userId);
     if (hasUser) {
       throw new BadRequestException('이미 존재하는 유저입니다.');
     }
-
     return this.userRepository.createUser(user);
   }
 

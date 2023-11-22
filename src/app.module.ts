@@ -10,10 +10,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from './config/guards/global.guard';
 import * as winston from 'winston';
 import { WinstonModule } from 'nest-winston';
-
+import { ConfigModule } from "@nestjs/config";
 @Module({
   imports: [
     TypeOrmModule.forRoot(TypeORMConfig),
+    ConfigModule.forRoot({
+      cache: true,
+      isGlobal: true,
+    }),
     UserModule,
     AuthModule,
     WinstonModule.forRoot({

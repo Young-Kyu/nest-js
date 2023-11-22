@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { CreateUserDto, UserProfileResponseDTO } from "src/modules/user/dto/user.dto";
-import { USER_AUTH_LEVEL } from "src/modules/user/model/user.model";
+import { CreateUserDto, UserProfileResponseDTO } from "../../modules/user/dto/user.dto";
+import { USER_AUTH_LEVEL } from "../../modules/user/model/user.model";
 import { Repository, DataSource } from "typeorm";
 import { UserEntity } from "../../entities/user/user.entity";
 
@@ -21,7 +21,7 @@ export class UserRepository extends Repository<UserEntity> {
   }
 
   async getUserByUserId(userId: string): Promise<UserEntity> {
-    return await this.findOneBy({ userId })
+    return await this.findOne({ where: { userId } })
   }
 
   async getUserByEmail(emailAddress: string): Promise<UserEntity> {
@@ -32,23 +32,24 @@ export class UserRepository extends Repository<UserEntity> {
     return user;
   }
 
-  /* 
-  async getUserByEmail(emailAddress: string): Promise<UserEntity> {
+  updateLastLoginDate(user: UserEntity): void {
+    user.updateLastLoginDate();
+  }
+
+  async getUserWithAuth(userId: string): Promise<UserEntity> {
     const user = await this.findOne({
-      where: { emailAddress },
-      relations: ['auth','history']
+      where: { userId: userId },
+      relations: ['auth'],
     })
-    console.log('=========================================================');
-    console.log(user);
-    console.log('=========================================================');
     return user;
   }
-  */
 
   async createUser(user: CreateUserDto) {
+    const { level, emailAddress, userId } = user;
     const addUser = this.create({
-      userLevel: user.level,
-      emailAddress: user.emailAddress,
+      userLevel: level,
+      emailAddress: emailAddress,
+      userId: userId
     });
     await this.save(addUser)
 
@@ -61,5 +62,4 @@ export class UserRepository extends Repository<UserEntity> {
       { userLevel: updateAuth }
     )
   }
-
 }

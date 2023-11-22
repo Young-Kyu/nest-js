@@ -1,14 +1,11 @@
 import { BadGatewayException, Controller, Get, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import axios from 'axios';
 import { UserService } from '../user/user.service';
-import { UserEntity } from '../../entities/user/user.entity';
 import { CreateUserDto } from '../user/dto/user.dto';
 import { USER_AUTH_LEVEL } from '../user/model/user.model';
-import { JwtService } from '@nestjs/jwt';
-import { isPublic } from 'src/config/guards/global.guard';
+import { isPublic } from '../../config/guards/global.guard';
 import * as config from 'config';
-import { ERROR_MESSAGE } from 'src/contants/error';
+import { ERROR_MESSAGE } from '../../contants/error';
 import { v4 as uuidv4 } from 'uuid';
 @Controller('auth')
 export class AuthController {
@@ -43,8 +40,8 @@ export class AuthController {
     const { email } = await this.authService.verifyGoogleIdToken(idToken);
 
     let user = await this.userService.getUserByEmail(email);
-
     let level = USER_AUTH_LEVEL.MEMBER;
+
     if (!user) {
       const isFirstMember = await this.userService.getUserCount();
       level = isFirstMember > 0 ? USER_AUTH_LEVEL.MEMBER : USER_AUTH_LEVEL.SUPER_ADMIN;
@@ -57,7 +54,9 @@ export class AuthController {
       user = await this.userService.createUser(createUserDto);
     }
 
-    const token = this.authService.generateJwtToken(user.emailAddress, level);
+    this.userService.updateUserLoginDate(user);
+
+    const token = this.authService.generateJwtToken(user.emailAddress, user.userId, level);
 
     res.redirect(`http://localhost:3000?userToken=${token}`);
 
@@ -66,7 +65,7 @@ export class AuthController {
   @Get('test')
   @isPublic()
   async test() {
-    const token = this.authService.generateJwtToken('qsc335@gmail.com', USER_AUTH_LEVEL.ADMIN);
+    const token = this.authService.generateJwtToken('qsc335@gmail.com', 'test1', USER_AUTH_LEVEL.ADMIN);
     return token;
   }
 

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { UserAuditHistoryEntity } from "src/entities/user/userAuditHistory.entity";
 import { Repository, DataSource } from "typeorm";
+import { UserAuditHistoryRequestDTO } from "./dto/user.dto";
+import { UserAuditHistoryEntity } from "../../entities/user/userAuditHistory.entity";
 
 
 @Injectable()
@@ -11,13 +12,36 @@ export class UserAuditHistoryRepository extends Repository<UserAuditHistoryEntit
   };
 
   async insertLog(request: InsertLogDTO) {
-    const aa = this.create({
+    const log = this.create({
       userId: request.userId,
       comment: request.comment
     })
 
-    await this.save(aa);
-    return aa
+    await this.save(log);
+    return log
+  }
+
+  async getAuditLogs(request: UserAuditHistoryRequestDTO & { id: number }) {
+
+    const { id, page = 1, size: take = 10 } = request;
+
+    const [history, total] = await this.findAndCount({
+      take,
+      skip: (page - 1) * take,
+      where: {
+        userId: id
+      }
+    })
+
+    return {
+      data: history,
+      paging: {
+        total,
+        page,
+        lastPage: Math.ceil(total / take)
+      }
+    }
+
   }
 
 }
