@@ -68,24 +68,4 @@ export class UserController {
     return this.userService.updateUserAuth(requestUser, body);
   }
 
-  @Post('tt')
-  @isPublic()
-  async createUser2(
-    @Body() body: { emailAddress: string; level: number }
-  ): Promise<boolean> {
-    for (let i = 7; i < 33; i++) {
-      await this.userService.createUser({
-        emailAddress: `test${i}@test.com`,
-        level: 3,
-        userId: `test${i}`
-      });
-    }
-    return true;
-  }
-}
-
-const delay = () => {
-  return new Promise((res) => {
-    setTimeout(() => res(true), 3000)
-  })
 }

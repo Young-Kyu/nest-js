@@ -38,6 +38,7 @@
 
   6. 권한 관련 CRUD 기능 개발 및 에러케이스 처리
     + Audit Log 포함
+    + 권한 수정 시 request User가 update 대상 User보다 권한이 높지 않으면 에러 처리
   
   7. 실행 환경 별 환경변수 분기처리
 

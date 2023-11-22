@@ -61,12 +61,4 @@ export class AuthController {
     res.redirect(`http://localhost:3000?userToken=${token}`);
 
   }
-
-  @Get('test')
-  @isPublic()
-  async test() {
-    const token = this.authService.generateJwtToken('qsc335@gmail.com', 'test1', USER_AUTH_LEVEL.ADMIN);
-    return token;
-  }
-
 }
